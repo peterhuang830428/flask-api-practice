@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from flask import jsonify
 import pymysql
 
-# 建立白名單
+# 
 parser = reqparse.RequestParser()
 parser.add_argument("name")
 parser.add_argument("gender")
@@ -14,7 +14,7 @@ class Users(Resource):
 
     def db_init(self):
         db = pymysql.connect('127.0.0.1', 'root', 'root', 'flask')
-        cursor = db.cursor(pymysql.cursors.DictCursor)  # 若無Dict，則預設會是tuple
+        cursor = db.cursor(pymysql.cursors.DictCursor) 
         return db, cursor
 
     def get(self):
@@ -40,7 +40,7 @@ class Users(Resource):
         arg = parser.parse_args()
         response = {}
 
-        if arg["name"] == None:  # 必須要給 name值，否則會跳錯
+        if arg["name"] == None: 
             response['code'] = 400
             response['msg'] = "name undetected"
             return jsonify(response)
@@ -73,10 +73,10 @@ class Users(Resource):
 class User(Resource):
     def db_init(self):
         db = pymysql.connect('127.0.0.1', 'root', 'root', 'flask')
-        cursor = db.cursor(pymysql.cursors.DictCursor)  # 若無Dict，則預設會是tuple
+        cursor = db.cursor(pymysql.cursors.DictCursor) 
         return db, cursor
 
-    def get(self, id):  # search one ID
+    def get(self, id):  
         db, cursor = self.db_init()
 
         sql = """
@@ -84,7 +84,7 @@ class User(Resource):
         """.format(id)
 
         cursor.execute(sql)
-        users = cursor.fetchone()  # 若此還是用fetchall的話會回傳一個陣列
+        users = cursor.fetchone()  
         db.close()
 
         response = {}
@@ -94,7 +94,7 @@ class User(Resource):
 
         return jsonify(response)
 
-    def put(self, id):  # update one ID's all keys
+    def put(self, id): 
         db, cursor = self.db_init()
         arg = parser.parse_args()
         user = {
@@ -124,7 +124,7 @@ class User(Resource):
 
         return jsonify(response)
 
-    def patch(self, id):  # update one ID's one(or more) key
+    def patch(self, id):  
         db, cursor = self.db_init()
         arg = parser.parse_args()
         user = {
@@ -161,29 +161,9 @@ class User(Resource):
 
         return jsonify(response)
 
-    # def delete(self, id):  # HARD delete one ID's all keys
-    #     db, cursor = self.db_init()
+   
 
-    #     sql = """
-    #         Delete from flask.users
-    #         Where id = '{}'
-    #     """.format(id)
-
-    #     result = cursor.execute(sql)
-    #     db.commit()
-    #     db.close()
-
-    #     response = {}
-    #     if result == 0:
-    #         response['code'] = 500
-    #         response['msg'] = 'error'
-    #     else:
-    #         response['code'] = 200
-    #         response['msg'] = 'success'
-
-    #     return jsonify(response)
-
-    def delete(self, id):  # SOFT delete one ID's all keys
+    def delete(self, id):  
         db, cursor = self.db_init()
 
         sql = """

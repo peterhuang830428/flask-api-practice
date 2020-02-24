@@ -2,7 +2,6 @@ from flask_restful import Resource, reqparse
 from flask import jsonify
 import pymysql
 
-# 建立白名單
 parser = reqparse.RequestParser()
 parser.add_argument("balance")
 parser.add_argument("account_number")
@@ -13,7 +12,7 @@ class Accounts(Resource):
 
     def db_init(self):
         db = pymysql.connect('127.0.0.1', 'root', 'root', 'flask')
-        cursor = db.cursor(pymysql.cursors.DictCursor)  # 若無Dict，則預設會是tuple
+        cursor = db.cursor(pymysql.cursors.DictCursor)  
         return db, cursor
 
     def get(self):
@@ -39,7 +38,6 @@ class Accounts(Resource):
         arg = parser.parse_args()
         response = {}
 
-        # 必須要給 account_number, user_id值，否則會跳錯
         if arg["account_number"] == None and arg["user_id"] == None:
             response['code'] = 400
             response['msg'] = "account_number undetected"
@@ -72,10 +70,10 @@ class Accounts(Resource):
 class Account(Resource):
     def db_init(self):
         db = pymysql.connect('127.0.0.1', 'root', 'root', 'flask')
-        cursor = db.cursor(pymysql.cursors.DictCursor)  # 若無Dict，則預設會是tuple
+        cursor = db.cursor(pymysql.cursors.DictCursor)  
         return db, cursor
 
-    def get(self, id):  # search one ID
+    def get(self, id):
         db, cursor = self.db_init()
 
         sql = """
@@ -83,7 +81,7 @@ class Account(Resource):
         """.format(id)
 
         cursor.execute(sql)
-        accounts = cursor.fetchone()  # 若此還是用fetchall的話會回傳一個陣列
+        accounts = cursor.fetchone() 
         db.close()
 
         response = {}
@@ -93,7 +91,7 @@ class Account(Resource):
 
         return jsonify(response)
 
-    def put(self, id):  # update one ID's all keys
+    def put(self, id):  
         db, cursor = self.db_init()
         arg = parser.parse_args()
         account = {
@@ -122,7 +120,7 @@ class Account(Resource):
 
         return jsonify(response)
 
-    def patch(self, id):  # update one ID's one(or more) key
+    def patch(self, id):  
         db, cursor = self.db_init()
         arg = parser.parse_args()
         account = {
@@ -158,29 +156,9 @@ class Account(Resource):
 
         return jsonify(response)
 
-    # def delete(self, id):  # HARD delete one ID's all keys
-    #     db, cursor = self.db_init()
 
-    #     sql = """
-    #         Delete from flask.accounts
-    #         Where id = '{}'
-    #     """.format(id)
 
-    #     result = cursor.execute(sql)
-    #     db.commit()
-    #     db.close()
-
-    #     response = {}
-    #     if result == 0:
-    #         response['code'] = 500
-    #         response['msg'] = 'error'
-    #     else:
-    #         response['code'] = 200
-    #         response['msg'] = 'success'
-
-    #     return jsonify(response)
-
-    def delete(self, id):  # SOFT delete one ID's all keys
+    def delete(self, id):  
         db, cursor = self.db_init()
 
         sql = """

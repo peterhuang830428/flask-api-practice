@@ -20,16 +20,16 @@ def home():
     return "Hello World"
 
 
-@app.before_request  # 早訪所有網頁前都一定要執行此部分
+@app.before_request  
 def auth():
     token = request.headers.get('auth')
-    if token == '567':  # 通常會在前面先自動給加密token，不會寫死
+    if token == '567': 
         pass
     else:
         return {"code": 401, "msg": "invalid token"}
 
 
-@app.errorhandler(Exception)  # 避免跳錯時會透露程式碼給使用者，因此要用較無緊要的訊息取代
+@app.errorhandler(Exception) 
 def handle_error(error):
     status_code = 500
     if type(error).__name__ == "NotFound":
@@ -41,7 +41,7 @@ def handle_error(error):
 @app.route('/account/<account_number>/deposit', methods=['POST'])
 def deposit(account_number):
     db, cursor, account = get_account(account_number)
-    money = request.values["money"]  # 從html(ex:body)抓money的參數
+    money = request.values["money"]
     balance = account["balance"] + int(money)
     sql = """
         Update flask.accounts
@@ -66,7 +66,7 @@ def deposit(account_number):
 @app.route('/account/<account_number>/withdraw', methods=['POST'])
 def withdraw(account_number):
     db, cursor, account = get_account(account_number)
-    money = request.values["money"]  # 從html(ex:body)抓money的參數
+    money = request.values["money"]
     balance = account["balance"] - int(money)
 
     response = {}
